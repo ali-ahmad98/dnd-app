@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-
+import classes from "./Panels.module.css";
+import TemplateTable from "./TemplateTable";
 // Import Antd
-import { Table, Modal, Input, Button, Form, Row, Col } from "antd";
+import { Table, Modal, Input, Button, Form, Row, Col, Checkbox } from "antd";
 
 // Local Variables
 const columns = [
@@ -103,8 +104,35 @@ const data = [
 const TradeBookingPanel = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [templateData1, setTemplateData1] = useState({
+    key: "22",
+    status: "pending",
+    trade_type: "borrow",
+    cparty: "",
+    security: "",
+    quantity: Number,
+    loan_value: Number,
+    collateral_code: Number,
+    rate: Number,
+    haircut: Number,
+    profit_ceter: Number,
+    term_date: "",
+  });
+  const [templateData2, setTemplateData2] = useState({
+    key: "33",
+    trade_type: "loan",
+    cparty: "",
+    // security: "",
+    // quantity: Number,
+    // loan_value: Number,
+    // collateral_code: Number,
+    // rate: Number,
+    // haircut: Number,
+    // profit_ceter: Number,
+    // term_date: "",
+  });
   const [tableData, setTableData] = useState(data);
-
+  const [isMatch, setIsMatch] = useState(false);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -145,22 +173,66 @@ const TradeBookingPanel = (props) => {
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-    values.key = tableData.length + 1;
-    values.status = "pending";
-    setTableData([...tableData, values]);
-    handleCancel();
-  };
+    if (isMatch) {
+      let row2 = {
+        ...templateData2,
+        status: "pending",
+        security: templateData1.security,
+        quantity: templateData1.quantity,
+        loan_value: templateData1.loan_value,
+        collateral_code: templateData1.collateral_code,
+        rate: templateData1.rate,
+        haircut: templateData1.haircut,
+        profit_ceter: templateData1.profit_ceter,
+        term_date: templateData1.term_date,
+      };
+      console.log("Received values of form: ", templateData1, row2);
+      setTableData([...tableData, templateData1, row2]);
+    } else {
+      setTableData([...tableData, templateData1]);
+    }
 
+    // values.key = tableData.length + 1;
+    // values.status = "pending";
+    // setTableData([...tableData, values]);
+    // handleCancel();
+  };
+  function onChange(e) {
+    console.log(`checked = ${e.target.checked}`);
+    setIsMatch(!isMatch);
+  }
   return (
-    <div>
-      <div>
-        <h3 style={{ float: "left", color: "#40A9FF" }}>Trade Booking</h3>
-        <div style={{ float: "right" }}>
-          <Button type="primary">Upload Template</Button> &nbsp;
-          <Button type="primary" onClick={showModal}>
-            + Add New Trade
-          </Button>
+    <div className={classes.main}>
+      <div className={classes.bookingCard}>
+        <div className={classes.upperContent}>
+          <h3>Trade Booking</h3>
+          <div className={classes.flex}>
+            <div className={classes.flex1}>
+              <Checkbox checked={isMatch} onChange={onChange}>
+                Match
+              </Checkbox>
+            </div>
+            <div className={classes.flex2}>
+              <TemplateTable
+                isMatch={isMatch}
+                templateData1={templateData1}
+                setTemplateData1={setTemplateData1}
+                templateData2={templateData2}
+                setTemplateData2={setTemplateData2}
+              />
+            </div>
+            <div className={classes.flex3}>
+              {" "}
+              <Button onClick={onFinish}>Book</Button>
+            </div>
+          </div>
+
+          {/* <div style={{ float: "right" }}>
+            <Button type="primary">Upload Template</Button> &nbsp;
+            <Button type="primary" onClick={showModal}>
+              + Add New Trade
+            </Button>
+          </div> */}
         </div>
       </div>
       <br />
@@ -173,7 +245,7 @@ const TradeBookingPanel = (props) => {
         onRow={(record, rowIndex) => {
           return {
             onClick: () => {
-              props.setSelectedTrade(record);
+              props.setSelectedTrade && props.setSelectedTrade(record);
             },
           };
         }}

@@ -31,13 +31,14 @@ const BookingPage = (props) => {
   const generateLayout = () => {
     const p = selectedPanels || [];
     return p.map(function (item, i) {
-      const w = i % 2 === 0 ? 9 : 3;
+      // const w = i % 2 === 0 ? 9 : 3;
+      console.log("width is", item.width, typeof item.width);
       // const w = item.width;
       const h = 7;
       return {
-        x: i % 2 === 0 ? 0 : 9,
+        x: item.width === 8 ? 0 : item.width === 3 ? 8 : 1,
         y: Math.floor(i / 6),
-        w: w,
+        w: item.width,
         h: h,
         i: i.toString(),
       };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addSelectedPanel } from "../../actions";
 
@@ -17,7 +17,7 @@ const panels = [
   {
     name: "Trade Booking",
     component: <TradeBookingPanel />,
-    width: 9,
+    width: 8,
     height: 7,
   },
   {
@@ -29,7 +29,7 @@ const panels = [
   {
     name: "Trade Browser",
     component: <TradeBrowserPanel />,
-    width: 9,
+    width: 8,
     height: 7,
   },
   {
@@ -44,6 +44,7 @@ const panels = [
 const Navbar = () => {
   const selectedPanels = useSelector((state) => state.selectedPanels);
   const dispatch = useDispatch();
+  const [selectedPanel_, setSelectedPanel] = useState(panels);
 
   for (let i = 0; i < panels.length; i++) {
     options.push({
@@ -51,7 +52,19 @@ const Navbar = () => {
       value: panels[i].name,
     });
   }
-
+  const onSelectHandler = (data) => {
+    const modArray1 = panels.filter((sp) => sp.name === data);
+    setSelectedPanel([...selectedPanel_, modArray1[0]]);
+    dispatch(addSelectedPanel([...selectedPanel_, modArray1[0]]));
+    //  setSelectedPanel(modArray);
+    console.log("Deselected", data, modArray1);
+  };
+  const onDeSelectHandler = (data) => {
+    const modArray = selectedPanel_.filter((sp) => sp.name !== data);
+    setSelectedPanel(modArray);
+    dispatch(addSelectedPanel(modArray));
+    console.log("Deselected", data, modArray);
+  };
   const selectProps = {
     mode: "multiple",
     style: {
@@ -59,12 +72,18 @@ const Navbar = () => {
     },
     options,
     onSelect: (newValue) => {
-      console.log(newValue);
+      onSelectHandler(newValue);
+    },
+    onDeselect: (newValue) => {
+      onDeSelectHandler(newValue);
     },
     placeholder: "Select Item...",
     maxTagCount: "responsive",
   };
-
+  const getDefaultSelected = (op) => {
+    console.log(op);
+    return op.map((od) => od.value);
+  };
   useEffect(() => {
     dispatch(addSelectedPanel(panels));
   }, []);
@@ -72,14 +91,17 @@ const Navbar = () => {
   return (
     <div style={{ float: "right" }}>
       <div>
-        <Button
+        {/* <Button
           type="danger"
           onClick={() => dispatch(addSelectedPanel(<TradeBrowserPanel />))}
         >
           Panel-1
         </Button>
-        &nbsp; &nbsp;
-        <Select {...selectProps} />
+        &nbsp; &nbsp; */}
+        <Select
+          defaultValue={() => getDefaultSelected(options)}
+          {...selectProps}
+        />
       </div>
     </div>
   );
