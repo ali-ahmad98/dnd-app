@@ -1,50 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { addSelectedPanel } from "../../actions";
-
-// Import Components
-import TradeBookingPanel from "./Panels/TradeBookingPanel";
-import SecurityInfoPanel from "./Panels/SecurityInfoPanel";
-import TradeBrowserPanel from "./Panels/TradeBrowserPanel";
-import CounterPartyPanel from "./Panels/CounterPartyPanel";
+import { useLocation } from "react-router-dom";
+import { panelsData } from "./Panels/PanelsData";
 
 // Import Antd
-import { Button, Select } from "antd";
+import { Menu, Select } from "antd";
 
 // Local Variables
 const options = [];
-const panels = [
-  {
-    name: "Trade Booking",
-    component: <TradeBookingPanel />,
-    width: 8,
-    height: 7,
-  },
-  {
-    name: "Security Info",
-    component: <SecurityInfoPanel />,
-    width: 3,
-    height: 7,
-  },
-  {
-    name: "Trade Browser",
-    component: <TradeBrowserPanel />,
-    width: 8,
-    height: 7,
-  },
-  {
-    name: "Counter Party",
-    component: <CounterPartyPanel />,
-    width: 3,
-    height: 7,
-  },
-];
+const panels = panelsData;
 
 // Main Component: Navbar
 const Navbar = () => {
-  const selectedPanels = useSelector((state) => state.selectedPanels);
   const dispatch = useDispatch();
+  const location = useLocation();
   const [selectedPanel_, setSelectedPanel] = useState(panels);
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/":
+        dispatch(addSelectedPanel(panels));
+        return;
+      case "/page2":
+        dispatch(addSelectedPanel(panels.slice(2, 4)));
+        return;
+
+      default:
+        return;
+    }
+  }, [location.pathname]);
 
   for (let i = 0; i < panels.length; i++) {
     options.push({
@@ -68,7 +54,7 @@ const Navbar = () => {
   const selectProps = {
     mode: "multiple",
     style: {
-      width: "200px",
+      width: "250px",
     },
     options,
     onSelect: (newValue) => {
@@ -84,20 +70,20 @@ const Navbar = () => {
     console.log(op);
     return op.map((od) => od.value);
   };
-  useEffect(() => {
-    dispatch(addSelectedPanel(panels));
-  }, []);
 
   return (
-    <div style={{ float: "right" }}>
-      <div>
-        {/* <Button
-          type="danger"
-          onClick={() => dispatch(addSelectedPanel(<TradeBrowserPanel />))}
-        >
-          Panel-1
-        </Button>
-        &nbsp; &nbsp; */}
+    <div>
+      <div style={{ float: "left", width: "50%" }}>
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
+          <Menu.Item key={"1"}>
+            <Link to="/">Trade Blotter</Link>
+          </Menu.Item>
+          <Menu.Item key={"2"}>
+            <Link to="/page2">Page2</Link>
+          </Menu.Item>
+        </Menu>
+      </div>
+      <div style={{ float: "right" }}>
         <Select
           defaultValue={() => getDefaultSelected(options)}
           {...selectProps}

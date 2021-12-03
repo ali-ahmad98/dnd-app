@@ -1,6 +1,6 @@
 .bookingCard {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  /* transition: 0.3s; */
 }
 .upperContent {
 }
@@ -37,7 +37,8 @@
 }
 
 .table thead th {
-  border: 1px solid #e4eff8;
+  /* border: 1px solid #e4eff8; */
+  border: none;
   background: white;
   cursor: pointer;
 }
@@ -83,4 +84,20 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.inputFile {
+  padding: 7px 12px;
+  font-size: 14px;
+  color: #fff;
+  background: #1890ff;
+  border-color: #1890ff;
+  border-radius: 2px;
+  cursor: pointer;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+
+.inputFile input[type="file"] {
+  display: none;
 }

@@ -1,6 +1,9 @@
-import classes from "./Panels.module.css";
-import { DatePicker, Space } from "antd";
+import { DatePicker, Input } from "antd";
 import moment from "moment";
+
+// Import CSS
+import classes from "./TradeBookingPanel.module.css";
+
 const TemplateTable = ({
   isMatch,
   templateData1,
@@ -80,7 +83,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="string"
               value={type === "1" ? templateData1.cparty : templateData2.cparty}
               onChange={(e) =>
@@ -99,7 +102,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="string"
               value={templateData1.security}
               onChange={(e) =>
@@ -113,7 +116,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="number"
               value={templateData1.quantity}
               onChange={(e) =>
@@ -127,7 +130,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="number"
               value={templateData1.loan_value}
               onChange={(e) =>
@@ -141,7 +144,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="number"
               value={templateData1.collateral_code}
               onChange={(e) =>
@@ -155,7 +158,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="string"
               value={templateData1.rate}
               onChange={(e) =>
@@ -169,7 +172,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="number"
               value={templateData1.haircut}
               onChange={(e) =>
@@ -183,7 +186,7 @@ const TemplateTable = ({
         </th>
         <th>
           <div>
-            <input
+            <Input
               type="number"
               className={classes.inputNumber}
               value={templateData1.profit_ceter}

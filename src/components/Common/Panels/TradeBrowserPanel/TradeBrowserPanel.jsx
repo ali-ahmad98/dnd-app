@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addSelectedBowser } from "../../../../actions";
 
 // Import Antd
 import { Table, Row, Col, DatePicker, Input, Button } from "antd";
@@ -78,6 +80,7 @@ const data = [
 // Main Component: TradeBrowserPanel
 const TradeBrowserPanel = (props) => {
   const [tableData, setTableData] = useState(data);
+  const dispatch = useDispatch();
   return (
     <div>
       <Row style={{ textAlign: "center" }}>
@@ -100,15 +103,35 @@ const TradeBrowserPanel = (props) => {
 
       <br />
 
+      <h3 style={{ textAlign: "center", color: "#40A9FF" }}>Borrows</h3>
+
       <Table
         columns={columns}
         dataSource={tableData}
         pagination={false}
         size="small"
-        onRow={(record, rowIndex) => {
+        onRow={(record) => {
           return {
             onClick: () => {
-              // props.setSelectedTrade2(record);
+              dispatch(addSelectedBowser(record));
+            },
+          };
+        }}
+      />
+
+      <br />
+
+      <h3 style={{ textAlign: "center", color: "#40A9FF" }}>Loans</h3>
+
+      <Table
+        columns={columns}
+        dataSource={tableData}
+        pagination={false}
+        size="small"
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              dispatch(addSelectedBowser(record));
             },
           };
         }}

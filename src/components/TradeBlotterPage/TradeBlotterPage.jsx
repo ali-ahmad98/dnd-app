@@ -5,7 +5,7 @@ const ReactGridLayout = WidthProvider(RGL);
 import { useSelector } from "react-redux";
 
 // Import CSS
-import "./BookingPage.css";
+import classes from "./TradeBlotterPage.module.css";
 
 // Main Component: BookingPage
 const BookingPage = (props) => {
@@ -19,10 +19,9 @@ const BookingPage = (props) => {
         <div
           key={l.i}
           data-grid={l}
-          className="section-container scrollbar"
-          id="scrollbar-style"
+          className={`${classes.sectionContainer} ${classes.scrollbarStyle}`}
         >
-          <div className="section">{selectedPanels[l.i].component}</div>
+          <div className={classes.section}>{selectedPanels[l.i].component}</div>
         </div>
       );
     });
@@ -34,9 +33,9 @@ const BookingPage = (props) => {
       // const w = i % 2 === 0 ? 9 : 3;
       console.log("width is", item.width, typeof item.width);
       // const w = item.width;
-      const h = 7;
+      const h = 10;
       return {
-        x: item.width === 8 ? 0 : item.width === 3 ? 8 : 1,
+        x: item.width === 7.5 ? 0 : 7.5,
         y: Math.floor(i / 6),
         w: item.width,
         h: h,
@@ -50,7 +49,7 @@ const BookingPage = (props) => {
   };
 
   return (
-    <div className="main-body">
+    <div className={classes.mainBody}>
       <h1 style={{ textAlign: "center", color: "#40A9FF" }}>Trade Blotter</h1>
       <ReactGridLayout onLayoutChange={onLayoutChange} {...props}>
         {generateDOM()}

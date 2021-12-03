@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import classes from "./Panels.module.css";
 import TemplateTable from "./TemplateTable";
+import { ExcelRenderer } from "react-excel-renderer";
+import template from "../../../../Assets/Template.xlsx";
+import { useDispatch } from "react-redux";
+import { addSelectedBooking } from "../../../../actions";
+
+// Import CSS
+import classes from "./TradeBookingPanel.module.css";
+
 // Import Antd
-import { Table, Modal, Input, Button, Form, Row, Col, Checkbox } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { Table, Button, Checkbox } from "antd";
 
 // Local Variables
 const columns = [
@@ -101,9 +109,11 @@ const data = [
 ];
 
 // Main Component: TradeBookingPanel
-const TradeBookingPanel = (props) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
+const TradeBookingPanel = () => {
+  const [tableData, setTableData] = useState(data);
+  const [isMatch, setIsMatch] = useState(false);
+
+  const dispatch = useDispatch();
   const [templateData1, setTemplateData1] = useState({
     key: "22",
     status: "pending",
@@ -131,46 +141,6 @@ const TradeBookingPanel = (props) => {
     // profit_ceter: Number,
     // term_date: "",
   });
-  const [tableData, setTableData] = useState(data);
-  const [isMatch, setIsMatch] = useState(false);
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const getFields = () => {
-    const children = [];
-
-    columns.map((col, i) => {
-      children.push(
-        col.key !== "status" && (
-          <Col span={12} key={i}>
-            <Form.Item
-              name={col.key}
-              label={col.title}
-              rules={[
-                {
-                  required: true,
-                  message: "Input something!",
-                },
-              ]}
-            >
-              <Input placeholder="placeholder" />
-            </Form.Item>
-          </Col>
-        )
-      );
-    });
-
-    return children;
-  };
 
   const onFinish = (values) => {
     if (isMatch) {
@@ -191,16 +161,41 @@ const TradeBookingPanel = (props) => {
     } else {
       setTableData([...tableData, templateData1]);
     }
-
-    // values.key = tableData.length + 1;
-    // values.status = "pending";
-    // setTableData([...tableData, values]);
-    // handleCancel();
   };
+
   function onChange(e) {
     console.log(`checked = ${e.target.checked}`);
     setIsMatch(!isMatch);
   }
+
+  const fileHandler = (event) => {
+    let fileObj = event.target.files[0];
+    ExcelRenderer(fileObj, (err, resp) => {
+      if (err) {
+        console.log(err);
+      } else {
+        let uploadedData = [];
+        resp.rows.map((row, index) => {
+          index !== 0 &&
+            uploadedData.push({
+              status: row[0],
+              trade_type: row[1],
+              cparty: row[2],
+              security: row[3],
+              quantity: row[4],
+              loan_value: row[5],
+              collateral_code: row[6],
+              haircut: row[7],
+              profit_ceter: row[8],
+              term_date: row[9],
+            });
+        });
+        const temp = [...tableData, ...uploadedData];
+        setTableData(temp);
+      }
+    });
+  };
+
   return (
     <div className={classes.main}>
       <div className={classes.bookingCard}>
@@ -222,55 +217,44 @@ const TradeBookingPanel = (props) => {
               />
             </div>
             <div className={classes.flex3}>
-              {" "}
               <Button onClick={onFinish}>Book</Button>
             </div>
           </div>
 
-          {/* <div style={{ float: "right" }}>
-            <Button type="primary">Upload Template</Button> &nbsp;
-            <Button type="primary" onClick={showModal}>
-              + Add New Trade
-            </Button>
-          </div> */}
+          <br />
+
+          <div style={{ float: "right" }}>
+            <a href={template} download="Template.xlsx">
+              <Button type="Primary">Download Template</Button>
+            </a>
+            &nbsp;
+            <label className={classes.inputFile}>
+              <UploadOutlined /> Upload Excel
+              <input
+                type="file"
+                onChange={fileHandler}
+                style={{ padding: "10px" }}
+              />
+            </label>
+          </div>
         </div>
       </div>
       <br />
       <br />
+
       <Table
         columns={columns}
         dataSource={tableData}
         pagination={false}
         size="small"
-        onRow={(record, rowIndex) => {
+        onRow={(record) => {
           return {
             onClick: () => {
-              props.setSelectedTrade && props.setSelectedTrade(record);
+              dispatch(addSelectedBooking(record));
             },
           };
         }}
       />
-      <Modal
-        title="Add New Trade"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={false}
-      >
-        <Form
-          form={form}
-          name="advanced_search"
-          className="ant-advanced-search-form"
-          onFinish={onFinish}
-        >
-          <Row gutter={24}>{getFields()}</Row>
-          <Form.Item style={{ textAlign: "right" }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };
